@@ -1,5 +1,3 @@
-function [ErrorRate,N0_0] = week5_3(varargin)
-
 T=3600;
 f=(0:0.01:4)';
 B=0.1;
@@ -64,13 +62,13 @@ for repN0 = 1:length(N0_0)
         ylabel('功率谱/Hz^{-1}')
         title('s_1')
         end
-%         figure(3)
         r = y+random('normal',0,N0/2,size(y));
 
-        rx = filter(0.3,[1 -exp(-10/3/fs)],r);
         
-        sys = zpk([],-1/0.3,1/0.3);
-        rx = lsim(sys,r,t-t(1));
+%         sys = zpk([],-1/0.3,1/0.3);
+%         rx = lsim(sys,r,t-t(1));
+
+        rx = conv(r,ones(fs,1),'full')/fs;
 
 %         plot(rx)
 
@@ -104,7 +102,7 @@ for repN0 = 1:length(N0_0)
         T2 = Tm.*T1;
         [ax2,ax1,ax3] = meshgrid(1:4,1:4,1:4);
         r00 = [1 -1 0 0];%R G Y Y
-        Delta = exp(-(fs-1)/fs/0.3);
+        Delta = 0;%exp(-(fs-1)/fs/0.3);
         Ey1 = r00(ax2)  ... % center value
               + (r00(ax1)-r00(ax2))*Delta; % the remain of step response, if value changed
         Ey2 = r00(ax3) + (r00(ax2)-r00(ax3))*Delta;
@@ -130,20 +128,18 @@ for repN0 = 1:length(N0_0)
     ErrSimple(repN0) = mean(ErrTrial);
     ErrUnion(repN0) = mean(ErrTrial1);
 end
-if nargin == 0
 figure;
+[ErrorRate5_3,N0_1] = week5_3(1);
+plot(N0_1',ErrorRate5_3')
 hold on
 plot(N0_0,ErrSimple)
 plot(N0_0,ErrUnion)
 hold off
-legend('单样本检测','多样本检测')
+legend('低通滤波单样本检测','低通滤波多样本检测','匹配滤波单样本检测','匹配滤波多样本检测')
 xlabel('n_0')
 ylabel('error rate')
-title('低通滤波器')
-end
+title('匹配滤波和低通滤波比较')
 
-ErrorRate = [ErrSimple;ErrUnion];
-end
 
 function Xf1 = PowerSpectralDensity(x,B,T,f,fs)
 x = reshape(x,[],1);
