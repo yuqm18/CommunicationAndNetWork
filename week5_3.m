@@ -2,12 +2,12 @@ T=3600;
 f=(0:0.01:4)';
 B=0.1;
 fs = 20;
-N0_0 = 0.1:0.05:1.6;%单边功率谱密度
+N0_0 = 0.1:0.08:1.6;%单边功率谱密度
 rng(2);
 ShowPSD = 0;
 
 for repN0 = 1:length(N0_0)
-    for repTrial = 1:10
+    for repTrial = 1:2
         N0 = N0_0(repN0);
 
         x=rand(T,1);
@@ -95,7 +95,7 @@ for repN0 = 1:length(N0_0)
             0 0.95 0 0.4;
             0 0.05 0.6 0;
             0.02 0 0 0.6]';
-        T1 = reshape(Tm,4,1,4);
+        T1 = reshape(Tm,1,4,4);
         T2 = Tm.*T1;
         [ax2,ax1,ax3] = meshgrid(1:4,1:4,1:4);
         r00 = [1 -1 0 0];%R G Y Y
